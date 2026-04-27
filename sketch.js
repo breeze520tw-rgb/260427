@@ -21,8 +21,31 @@ function draw() {
   let x = (width - vW) / 2;
   let y = (height - vH) / 2;
 
-  // 顯示影像
-  image(capture, x, y, vW, vH);
+  // 載入攝影機的像素資料
+  capture.loadPixels();
+
+  // 設定點的間距
+  let stepSize = 12;
+
+  for (let cy = 0; cy < capture.height; cy += stepSize) {
+    for (let cx = 0; cx < capture.width; cx += stepSize) {
+      // 計算像素索引 (RGBA)
+      let i = (cy * capture.width + cx) * 4;
+      let r = capture.pixels[i];
+      let g = capture.pixels[i + 1];
+      let b = capture.pixels[i + 2];
+
+      fill(r, g, b);
+      noStroke();
+      
+      // 將攝影機座標對應到畫布上的置中位置
+      let drawX = map(cx, 0, capture.width, x, x + vW);
+      let drawY = map(cy, 0, capture.height, y, y + vH);
+      
+      // 繪製圓點
+      circle(drawX, drawY, stepSize * (vW / capture.width));
+    }
+  }
 }
 
 function windowResized() {

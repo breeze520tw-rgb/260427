@@ -21,13 +21,6 @@ function draw() {
   // 設定背景顏色為 e7c6ff
   background('#e7c6ff');
 
-  // 1. 在整個畫布上方中間加上文字
-  fill(0); // 文字顏色為黑色
-  noStroke();
-  textSize(32);
-  textAlign(CENTER, TOP);
-  text("414XXX183 王o崴", width / 2, 20);
-
   // 計算影像寬高（全螢幕的 50%）
   let vW = width * 0.5;
   let vH = height * 0.5;
@@ -39,26 +32,29 @@ function draw() {
   // 載入攝影機的像素資料
   capture.loadPixels();
 
-  // 設定點的間距
-  let stepSize = 12;
+  // 確保攝影機像素資料已載入且寬度正確，避免讀取到黑色空值
+  if (capture.pixels.length > 0 && capture.width > 0) {
+    // 設定點的間距
+    let stepSize = 12;
 
-  for (let cy = 0; cy < capture.height; cy += stepSize) {
-    for (let cx = 0; cx < capture.width; cx += stepSize) {
-      // 計算像素索引 (RGBA)
-      let i = (cy * capture.width + cx) * 4;
-      let r = capture.pixels[i];
-      let g = capture.pixels[i + 1];
-      let b = capture.pixels[i + 2];
+    for (let cy = 0; cy < capture.height; cy += stepSize) {
+      for (let cx = 0; cx < capture.width; cx += stepSize) {
+        // 計算像素索引 (RGBA)
+        let i = (cy * capture.width + cx) * 4;
+        let r = capture.pixels[i];
+        let g = capture.pixels[i + 1];
+        let b = capture.pixels[i + 2];
 
-      fill(r, g, b);
-      noStroke();
-      
-      // 將攝影機座標對應到畫布上的置中位置
-      let drawX = map(cx, 0, capture.width, x, x + vW);
-      let drawY = map(cy, 0, capture.height, y, y + vH);
-      
-      // 繪製圓點
-      circle(drawX, drawY, stepSize * (vW / capture.width));
+        fill(r, g, b);
+        noStroke();
+        
+        // 將攝影機座標對應到畫布上的置中位置
+        let drawX = map(cx, 0, capture.width, x, x + vW);
+        let drawY = map(cy, 0, capture.height, y, y + vH);
+        
+        // 繪製圓點
+        circle(drawX, drawY, stepSize * (vW / capture.width));
+      }
     }
   }
 
@@ -105,6 +101,17 @@ function draw() {
       bubbles.splice(i, 1);
     }
   }
+
+  // 4. 文字最後繪製，確保在最上層
+  push(); // 開始獨立樣式設定
+  fill(0); // 文字顏色為黑色
+  noStroke();
+  textSize(32);
+  textAlign(CENTER, TOP);
+  // 使用 textStyle(BOLD) 確保更清晰
+  textStyle(BOLD);
+  text("414XXX183 王o崴", width / 2, 20);
+  pop(); // 結束樣式設定，不影響其他繪製
 }
 
 function windowResized() {
